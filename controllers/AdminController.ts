@@ -3,6 +3,14 @@ import { CreateVendorInput } from "../dto";
 import { vendor } from "../models";
 import { GeneratePassword, GenerateSalt } from "../utility/PasswordUtility";
 
+export const FindVendor = async (id: string | undefined, email?: string) => {
+  if (email) {
+    return await vendor.findOne({ email: email });
+  } else {
+    return await vendor.findById(id);
+  }
+};
+
 export const CreateVendor = async (
   req: Request,
   res: Response,
@@ -20,7 +28,7 @@ export const CreateVendor = async (
     password,
   } = <CreateVendorInput>req.body;
 
-  const existingVendor = await vendor.findOne({ email: email });
+  const existingVendor = await FindVendor("", email);
 
   if (existingVendor != null) {
     return res.json({
@@ -56,10 +64,31 @@ export const GetVendors = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {};
+) => {
+  const vendors = await vendor.find();
+
+  if (vendors !== null) {
+    return res.json({
+      count: vendors.length,
+      vendors: vendors,
+    });
+  }
+
+  return res.json({ error: "No vendors available" });
+};
 
 export const GetVendorById = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {};
+) => {
+  const vendorId = req.params.vendorId;
+
+  const vendorData = await FindVendor(vendorId);
+
+  if (vendorData !== null) {
+    return res.json(vendorData);
+  }
+
+  return res.json({ error: "No vendor available" });
+};

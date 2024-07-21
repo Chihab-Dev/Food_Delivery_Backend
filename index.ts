@@ -15,7 +15,6 @@ app.use("/vendor", VendorRoute);
 
 mongoose
   .connect(MONGO_URI, {
-    useNewUrlParser: true,
     useUnifiedTopology: true,
   } as ConnectOptions)
   .then((result) => console.log("Connected to the server : " + MONGO_URI))
