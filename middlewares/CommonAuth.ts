@@ -4,7 +4,7 @@ import { ValidateToken } from "../utility/PasswordUtility";
 
 declare global {
   namespace Express {
-    interface request {
+    interface Request {
       user?: AuthPayload;
     }
   }

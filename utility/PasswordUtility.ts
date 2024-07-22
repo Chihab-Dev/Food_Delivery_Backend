@@ -34,7 +34,7 @@ export const ValidateToken = async (req: Request) => {
       APP_SECRET_KEY
     ) as AuthPayload;
 
-    req.body.user = payload;
+    req.user = payload;
 
     return true;
   }
