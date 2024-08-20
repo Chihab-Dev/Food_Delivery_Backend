@@ -7,6 +7,7 @@ import {
   CustomerUpdateProfile,
   CustomerVerifyAccount,
 } from "../controllers";
+import { Authenticate } from "../middlewares";
 
 const router = express.Router();
 
@@ -15,6 +16,9 @@ router.post("/signup", CustomerSignup);
 
 /** ------------------- Login ------------------- **/
 router.post("/login", CustomerLogin);
+
+// Authentication
+router.use(Authenticate);
 
 /** ------------------- Verify customer account ------------------- **/
 router.patch("/verify", CustomerVerifyAccount);
