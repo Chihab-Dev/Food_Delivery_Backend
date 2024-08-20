@@ -185,7 +185,19 @@ export const CustomerGetProfile = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {};
+) => {
+  const customer = req.user;
+
+  if (customer) {
+    const profile = await Customer.findById(customer._id);
+
+    if (profile) {
+      res.status(200).json({
+        data: profile,
+      });
+    }
+  }
+};
 export const CustomerUpdateProfile = async (
   req: Request,
   res: Response,
