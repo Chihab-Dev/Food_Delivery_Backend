@@ -10,7 +10,7 @@ const startServer = async () => {
   await App(app);
 
   app.listen(8000, () => {
-    console.clear();
+    // console.clear();
     console.log("listening to port 8000");
   });
 };

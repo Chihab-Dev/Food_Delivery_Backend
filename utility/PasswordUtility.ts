@@ -21,7 +21,7 @@ export const IsPasswordValid = async (
   return (await GeneratePassword(inputPassword, vendorSalt)) === vendorPassword;
 };
 
-export const GenerateToken = (payload: VendorPayload) => {
+export const GenerateToken = (payload: AuthPayload) => {
   return jwt.sign(payload, APP_SECRET_KEY, { expiresIn: "1d" });
 };
 

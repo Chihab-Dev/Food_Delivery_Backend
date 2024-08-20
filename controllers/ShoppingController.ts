@@ -30,11 +30,13 @@ export const GetTopRestaurants = async (
 
   try {
     const result = await vendor
-      .find({ pincode: pincode, serviceAvailable: false })
+      .find({ pincode: pincode, serviceAvailable: true })
       .sort([["rating", "descending"]])
       .limit(10);
     if (result.length > 0) {
-      return res.status(200).json(result);
+      return res.status(200).json({
+        topRestaurants: result,
+      });
     }
 
     return res.status(404).json({ message: "Data not found" });
@@ -82,7 +84,7 @@ export const SearchFoods = async (
 
   try {
     const result = await vendor
-      .find({ pincode: pincode, serviceAvailable: false })
+      .find({ pincode: pincode, serviceAvailable: true })
       .populate("foods");
 
     if (result.length > 0) {
