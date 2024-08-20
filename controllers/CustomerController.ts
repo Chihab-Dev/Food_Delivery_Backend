@@ -1,13 +1,14 @@
 import { plainToClass } from "class-transformer";
 import { validate } from "class-validator";
 import { NextFunction, Request, Response } from "express";
-import { CreateCustomerInputs } from "../dto/Customer.dto";
+import { CreateCustomerInputs, customerLoginInputs } from "../dto/Customer.dto";
 import { Customer } from "../models";
 import { GenerateOtp } from "../utility";
 import {
   GeneratePassword,
   GenerateSalt,
   GenerateToken,
+  IsPasswordValid,
 } from "../utility/PasswordUtility";
 
 export const CustomerSignup = async (
@@ -83,7 +84,41 @@ export const CustomerLogin = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {};
+) => {
+  const loginInputs = plainToClass(customerLoginInputs, req.body);
+  const inputsErrors = await validate(loginInputs);
+
+  if (inputsErrors.length > 0) {
+    return res.status(400).json(inputsErrors);
+  }
+
+  const { email, password } = loginInputs;
+
+  const customer = await Customer.findOne({ email: email });
+
+  if (customer) {
+    const validation = await IsPasswordValid(
+      password,
+      customer.password,
+      customer.salt
+    );
+
+    if (validation) {
+      const signature = GenerateToken({
+        _id: customer.id,
+        verified: customer.verified,
+        email: customer.email,
+      });
+
+      return res.status(200).json({
+        signature: signature,
+        verified: customer.verified,
+        email: customer.email,
+      });
+    }
+  }
+  return res.status(400).json({ message: "Error with Login" });
+};
 
 export const CustomerVerifyAccount = async (
   req: Request,
