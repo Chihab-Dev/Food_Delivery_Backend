@@ -1,4 +1,7 @@
 // Generate OTP
+import dotenv from "dotenv";
+
+dotenv.config();
 
 export const GenerateOtp = () => {
   const otp = Math.floor(100000 + Math.random() * 900000);
