@@ -24,3 +24,14 @@ export class customerLoginInputs {
   @Length(7, 12)
   password: string;
 }
+
+export class CustomerUpdateProfileInputs {
+  @Length(5, 15)
+  firstName: string;
+
+  @Length(5, 15)
+  lastName: string;
+
+  @Length(5, 15)
+  address: string;
+}

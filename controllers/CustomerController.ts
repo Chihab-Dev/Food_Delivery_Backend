@@ -1,7 +1,11 @@
 import { plainToClass } from "class-transformer";
 import { validate } from "class-validator";
 import { NextFunction, Request, Response } from "express";
-import { CreateCustomerInputs, customerLoginInputs } from "../dto/Customer.dto";
+import {
+  CreateCustomerInputs,
+  customerLoginInputs,
+  CustomerUpdateProfileInputs,
+} from "../dto/Customer.dto";
 import { Customer } from "../models";
 import { GenerateOtp } from "../utility";
 import {
@@ -197,9 +201,36 @@ export const CustomerGetProfile = async (
       });
     }
   }
+  return res.status(400).json({ message: "Error getting profile" });
 };
 export const CustomerUpdateProfile = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {};
+) => {
+  const customer = req.user;
+  const inputs = plainToClass(CustomerUpdateProfileInputs, req.body);
+  const inputsErrors = await validate(inputs);
+
+  if (inputsErrors.length > 0) {
+    return res.status(400).json(inputsErrors);
+  }
+
+  const { firstName, lastName, address } = inputs;
+
+  if (customer) {
+    const profile = await Customer.findById(customer._id);
+
+    if (profile) {
+      profile.firstName = firstName;
+      profile.lastName = lastName;
+      profile.address = address;
+
+      await profile.save();
+      res.status(200).json({
+        data: profile,
+      });
+    }
+  }
+  return res.status(400).json({ message: "Error updating profile" });
+};
